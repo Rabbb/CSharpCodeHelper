@@ -8,7 +8,7 @@ namespace CodeLib01;
 /// <summary>
 /// 2023-3-1 Ciaran 共键字典
 /// </summary>
-public class MultipleDictionary<TKey, TValue> : IDictionary<TKey, ICollection<TValue>> where TKey: notnull
+public class MultipleDictionary<TKey, TValue> : IDictionary<TKey, ICollection<TValue>> where TKey : notnull
 {
     private readonly Dictionary<TKey, ICollection<TValue>> storage;
     private readonly Func<ICollection<TValue>> GetCollection;
@@ -16,6 +16,7 @@ public class MultipleDictionary<TKey, TValue> : IDictionary<TKey, ICollection<TV
     public MultipleDictionary() : this(false)
     {
     }
+
     public MultipleDictionary(bool keyHasSameValue)
     {
         storage = new Dictionary<TKey, ICollection<TValue>>();
@@ -47,6 +48,7 @@ public class MultipleDictionary<TKey, TValue> : IDictionary<TKey, ICollection<TV
         ICollection<TValue> values;
         if (!storage.ContainsKey(key)) storage.Add(key, values = GetCollection());
         else values = storage[key];
+        if (value is null || value.Count == 0) return;
         foreach (var value1 in value)
         {
             values.Add(value1);
@@ -59,7 +61,6 @@ public class MultipleDictionary<TKey, TValue> : IDictionary<TKey, ICollection<TV
         var has_item = storage.Count > 0;
         if (has_item) storage[key].Clear();
         return has_item;
-
     }
 
     public bool TryGetValue(TKey key, out ICollection<TValue> value)
@@ -82,7 +83,11 @@ public class MultipleDictionary<TKey, TValue> : IDictionary<TKey, ICollection<TV
     public ICollection<TValue> this[TKey key]
     {
         get => !storage.ContainsKey(key) ? GetCollection() : storage[key];
-        set => this.Add(new KeyValuePair<TKey, ICollection<TValue>>(key, value));
+        set
+        {
+            this.Remove(key);
+            this.Add(key, value);
+        }
     }
 
     public IEnumerator<KeyValuePair<TKey, ICollection<TValue>>> GetEnumerator()
@@ -97,7 +102,6 @@ public class MultipleDictionary<TKey, TValue> : IDictionary<TKey, ICollection<TV
 
     public void Add(KeyValuePair<TKey, ICollection<TValue>> item)
     {
-        if (item.Value is null || item.Value.Count == 0) return;
         var key = item.Key;
         this.Add(key, item.Value);
     }
