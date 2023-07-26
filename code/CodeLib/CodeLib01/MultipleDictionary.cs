@@ -82,7 +82,7 @@ public class MultipleDictionary<TKey, TValue> : IDictionary<TKey, ICollection<TV
     public ICollection<TValue> this[TKey key]
     {
         get => !storage.ContainsKey(key) ? GetCollection() : storage[key];
-        set => throw new NotSupportedException();
+        set => this.Add(new KeyValuePair<TKey, ICollection<TValue>>(key, value));
     }
 
     public IEnumerator<KeyValuePair<TKey, ICollection<TValue>>> GetEnumerator()
