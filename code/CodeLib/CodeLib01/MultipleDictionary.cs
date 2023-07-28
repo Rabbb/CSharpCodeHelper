@@ -1,7 +1,11 @@
 ﻿using System;
+// ReSharper disable once RedundantUsingDirective
+using System.Runtime;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+
+// ReSharper disable ConditionIsAlwaysTrueOrFalseAccordingToNullableAPIContract
 
 namespace CodeLib01;
 
@@ -21,15 +25,15 @@ public class MultipleDictionary<TKey, TValue> : IDictionary<TKey, ICollection<TV
     {
         storage = new Dictionary<TKey, ICollection<TValue>>();
         if (keyHasSameValue)
-            this.GetCollection = () => new List<TValue>();
+            GetCollection = () => new List<TValue>();
         else
-            this.GetCollection = () => new HashSet<TValue>();
+            GetCollection = () => new HashSet<TValue>();
     }
 
     public MultipleDictionary(Func<ICollection<TValue>> getCollection)
     {
         storage = new Dictionary<TKey, ICollection<TValue>>();
-        this.GetCollection = getCollection;
+        GetCollection = getCollection;
     }
 
     public void Add(TKey key, TValue value)
@@ -43,7 +47,7 @@ public class MultipleDictionary<TKey, TValue> : IDictionary<TKey, ICollection<TV
         return storage.ContainsKey(key) && storage[key].Remove(value);
     }
 
-    public void Add(TKey key, ICollection<TValue> value)
+    public void Add(TKey key, ICollection<TValue>? value)
     {
         ICollection<TValue> values;
         if (!storage.ContainsKey(key)) storage.Add(key, values = GetCollection());
@@ -85,8 +89,8 @@ public class MultipleDictionary<TKey, TValue> : IDictionary<TKey, ICollection<TV
         get => !storage.ContainsKey(key) ? GetCollection() : storage[key];
         set
         {
-            this.Remove(key);
-            this.Add(key, value);
+            Remove(key);
+            Add(key, value);
         }
     }
 
@@ -103,7 +107,7 @@ public class MultipleDictionary<TKey, TValue> : IDictionary<TKey, ICollection<TV
     public void Add(KeyValuePair<TKey, ICollection<TValue>> item)
     {
         var key = item.Key;
-        this.Add(key, item.Value);
+        Add(key, item.Value);
     }
 
     public void Clear()
@@ -129,7 +133,7 @@ public class MultipleDictionary<TKey, TValue> : IDictionary<TKey, ICollection<TV
     public bool Remove(KeyValuePair<TKey, ICollection<TValue>> item)
     {
         var key = item.Key;
-        var value = item.Value;
+        ICollection<TValue>? value = item.Value;
         if (!storage.ContainsKey(key) || value is null || value.Count == 0) return false;
         var values = storage[key];
         return value.Select(value1 => values.Remove(value1)).Aggregate((b1, b2) => b1 || b2);

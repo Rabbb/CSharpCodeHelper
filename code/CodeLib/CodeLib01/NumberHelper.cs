@@ -1,8 +1,7 @@
 ﻿using System;
-using System.Linq;
 using System.Text;
-using System.Text.RegularExpressions;
 
+#pragma warning disable CS0219,CS8600,CS8602,CS8603,CS8604,CS8618,CS8619,CS8625,CS8714
 namespace CodeLib01;
 
 public static class NumberHelper
@@ -33,7 +32,7 @@ public static class NumberHelper
             switch (decimal_number)
             {
                 case < 0:
-                    throw new ArgumentOutOfRangeException("32进制值范围0~31");
+                    throw new ArgumentOutOfRangeException(nameof(decimal_number), "32进制值范围0~31");
                 case < 10:
                     return (char)(decimal_number + '0');
                 case < 32:
@@ -46,7 +45,7 @@ public static class NumberHelper
                     return (char)new_char;
                 }
                 default:
-                    throw new ArgumentOutOfRangeException("32进制值范围0~31");
+                    throw new ArgumentOutOfRangeException(nameof(decimal_number), "32进制值范围0~31");
             }
         }
 
@@ -80,27 +79,27 @@ public static class NumberHelper
     /// <returns></returns>
     public static long From32System(string s_32sys_num)
     {
-        int ToBinary(char c_32sys_num)
+        uint ToBinary(char c_32sys_num)
         {
             switch (c_32sys_num)
             {
                 case < '0':
-                    throw new ArgumentOutOfRangeException("32进制值范围0~31");
+                    throw new ArgumentOutOfRangeException(nameof(c_32sys_num), "32进制值范围0~31");
                 // '9' + 1 = ':'
                 case < ':':
-                    return c_32sys_num - '0';
+                    return (uint)c_32sys_num - '0';
                 case < 'A':
-                    throw new ArgumentOutOfRangeException("32进制值范围0~31");
+                    throw new ArgumentOutOfRangeException(nameof(c_32sys_num), "32进制值范围0~31");
                 case < 'Z':
                 {
-                    int new_char = c_32sys_num - 'A' + 10;
+                    uint new_char = (uint)c_32sys_num - 'A' + 10;
                     if (c_32sys_num > 'R') new_char--;
                     if (c_32sys_num > 'N') new_char--;
                     if (c_32sys_num > 'H') new_char--;
                     return new_char;
                 }
                 default:
-                    throw new ArgumentOutOfRangeException("32进制值范围0~31");
+                    throw new ArgumentOutOfRangeException(nameof(c_32sys_num), "32进制值范围0~31");
             }
         }
 
@@ -108,7 +107,7 @@ public static class NumberHelper
         for (int i = 0; i < 13 && i < s_32sys_num.Length; i++)
         {
             result <<= 5;
-            result |= (long)ToBinary(s_32sys_num[i]);
+            result |= ToBinary(s_32sys_num[i]);
         }
 
         return result;
