@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace CodeLib01.Models
 {
-    public struct DateTimeRange
+    public struct DateRange
     {
         public DateTime Begin { get; set; }
         public DateTime End { get; set; }

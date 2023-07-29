@@ -3,7 +3,8 @@ using System.Collections.Generic;
 using System.Globalization;
 using CodeLib01.Models;
 using Newtonsoft.Json.Linq;
-#pragma warning disable CS8625
+
+#pragma warning disable CS0219,CS8600,CS8602,CS8603,CS8604,CS8618,CS8619,CS8625,CS8714
 
 namespace CodeLib01
 {
@@ -88,30 +89,26 @@ namespace CodeLib01
         /// </summary>
         /// <param name="day"></param>
         /// <returns></returns>
-        public static DateTimeRange GetWeekDateRange(DateTime day)
+        public static DateRange GetWeekDateRange(DateTime day)
         {
             var day_of_week = (int)day.DayOfWeek;
-            //if (day_of_week == 0)
-            //{
-            //    day_of_week = 7;
-            //}
             var first_day = day.AddDays(-day_of_week);
             var last_day = day.AddDays(6 - day_of_week);
-            return new DateTimeRange { Begin = first_day, End = last_day };
+            return new DateRange { Begin = first_day, End = last_day };
         }
-
+        
         /// <summary>
         /// 获取当前月份的开始和结束的日期区间
         /// </summary>
         /// <param name="day"></param>
         /// <returns></returns>
-        public static DateTimeRange GetMonthDateRange(DateTime day)
+        public static DateRange GetMonthDateRange(DateTime day)
         {
             int year = day.Year;
             int month = day.Month;
             var first_day = new DateTime(year, month, 1);
             var last_day = new DateTime(year, month, DateTime.DaysInMonth(year, month));
-            return new DateTimeRange { Begin = first_day, End = last_day };
+            return new DateRange { Begin = first_day, End = last_day };
         }
 
         /// <summary>
@@ -160,7 +157,7 @@ namespace CodeLib01
                 var shownStartDate = weekStartDate < startDate ? startDate : weekStartDate;
                 var shownEndDate = weekEndDate > endDate ? endDate : weekEndDate;
                 //Console.WriteLine($"Week {i++}: {shownStartDate:dd MMMM yyyy} - {shownEndDate:dd MMMM yyyy}");
-                var week = GetWeekIndexByYear(shownStartDate);
+                var week = WeekOfYear(shownStartDate);
                 weeks.Add(week);
                 weekStartDate = weekStartDate.AddDays(7);
             }
@@ -177,7 +174,7 @@ namespace CodeLib01
         {
             dt = dt.Date;
             weekend = dt.AddDays((int)DayOfWeek.Saturday - (int)dt.DayOfWeek);
-            return GetWeekIndexByYear(weekend);
+            return WeekOfYear(weekend);
         }
 
 
@@ -186,129 +183,33 @@ namespace CodeLib01
         /// </summary>
         /// <param name="dt"></param>
         /// <returns></returns>
-        public static int GetWeekIndexByYear(DateTime dt)
-        {
-            DateTime curDay = dt;
-
-            int firstdayofweek = Convert.ToInt32(Convert.ToDateTime(curDay.Year + "-1-1").DayOfWeek);
-
-            int days = curDay.DayOfYear;
-            int daysOutOneWeek = days - (7 - firstdayofweek);
-
-            if (daysOutOneWeek <= 0)
-            {
-                return 1;
-            }
-
-            int weeks = daysOutOneWeek / 7;
-            if (daysOutOneWeek % 7 != 0)
-                weeks++;
-
-            return weeks + 1;
-            ////当前时间当年的第一天
-            //DateTime time = Convert.ToDateTime(dt.ToString("yyyy") + "-01-01");
-            //TimeSpan ts = dt - time;
-            ////当年第一天是星期几
-            //int firstDayOfWeek = (int)time.DayOfWeek;
-            ////获取当前时间已过的总天数（四舍五入）
-            //int day = int.Parse(ts.TotalDays.ToString("F0")) + 1;
-            ////今年第一天星期日
-            //if (firstDayOfWeek == 0)
-            //{
-            //    //总天数减1
-            //    day--;
-            //}
-            //else
-            //{
-            //    //减去第一周的天数
-            //    day = day - (7 - firstDayOfWeek + 1);
-            //}
-            ////当前日期的星期
-            //int thisDayOfWeek = (int)dt.DayOfWeek;
-            ////星期日直接减7天
-            //if (thisDayOfWeek == 0)
-            //{
-            //    day = day - 7;
-            //}
-            //else
-            //{
-            //    day = day - thisDayOfWeek;
-            //}
-            ////第一个星期完整的7天+ 当前时间这个星期的7天 除以7
-            //int week = (day + 7 + 7) / 7;
-            //return week;
-        }
+        public static int WeekOfYear(this DateTime curDay) => (int)Math.Ceiling((curDay.DayOfYear + (int)new DateTime(curDay.Year, 1, 1).DayOfWeek) / 7.0);
+        // public static int WeekOfYear(this DateTime curDay) => DateTimeFormatInfo.InvariantInfo.Calendar.GetWeekOfYear(curDay, CalendarWeekRule.FirstDay, DayOfWeek.Sunday);
 
         /// <summary>
         /// 得到一年中的某周的起始日和截止日(从周日开始计算)
-        /// 年 nYear
-        /// 周数 nNumWeek
-        /// 周始 out dtWeekStart
-        /// 周终 out dtWeekeEnd
         /// </summary>
-        /// <param name="nYear"></param>
-        /// <param name="nNumWeek"></param>
-        /// <param name="dtWeekStart"></param>
-        /// <param name="dtWeekeEnd"></param>
+        /// <param name="nYear">年</param>
+        /// <param name="nNumWeek">第几周</param>
+        /// <param name="dtWeekStart">开始日期</param>
+        /// <param name="dtWeekeEnd">结束日期</param>
         public static void GetWeek(int nYear, int nNumWeek, out DateTime dtWeekStart, out DateTime dtWeekeEnd)
         {
-            //DateTime dt = new DateTime(nYear, 1, 1);
-            //dt = dt + new TimeSpan((nNumWeek - 1) * 7, 0, 0, 0);
-            //dtWeekStart = dt.AddDays(-(int)dt.DayOfWeek + (int)DayOfWeek.Sunday);
-            //dtWeekeEnd = dt.AddDays((int)DayOfWeek.Friday - (int)dt.DayOfWeek + 1).AddDays(1);
-            GetFirstEndDayOfWeek(nYear, nNumWeek, CultureInfo.CurrentCulture, out dtWeekStart, out dtWeekeEnd);
-        }
-
-
-        /// <summary>
-        /// 根据一年中的第几周获取该周的开始日期与结束日期
-        /// </summary>
-        /// <param name="year"></param>
-        /// <param name="weekNumber"></param>
-        /// <param name="culture"></param>
-        /// <param name="start_time"></param>
-        /// <param name="end_time"></param>
-        /// <returns></returns>
-        public static void GetFirstEndDayOfWeek(int year, int weekNumber, CultureInfo culture, out DateTime start_time, out DateTime end_time)
-        {
-            Calendar calendar = culture.Calendar;
-
-            DateTime firstOfYear = new DateTime(year, 1, 1);
-
-            DateTime targetDay = calendar.AddWeeks(firstOfYear, weekNumber - 1);
-
-
-            while (targetDay.DayOfWeek != DayOfWeek.Sunday)
-
-            {
-                targetDay = targetDay.AddDays(-1);
-            }
-
-            start_time = targetDay;
-            end_time = targetDay.AddDays(6);
-
-            //return Tuple.Create<DateTime, DateTime>(targetDay, targetDay.AddDays(6));
+            var firstOfYear = new DateTime(nYear, 1, 1);
+            dtWeekStart = firstOfYear.AddDays(-(int)firstOfYear.DayOfWeek).AddDays((nNumWeek - 1) * 7);
+            dtWeekeEnd = dtWeekStart.AddDays(6);
         }
 
         /// <summary>
         /// 得到一年中的某周的起始日和截止日(从周日开始计算)
-        /// 年 nYear
-        /// 周数 nNumWeek
-        /// 周始 out dtWeekStart
-        /// 周终 out dtWeekeEnd
-        /// </summary>
-        /// <param name="nYear"></param>
-        /// <param name="nNumWeek"></param>
-        /// <param name="dtWeekStart"></param>
-        /// <param name="dtWeekeEnd"></param>
+        /// <param name="nYear">年</param>
+        /// <param name="nNumWeek">第几周</param>
+        /// <param name="dtWeekStart">开始日期</param>
+        /// <param name="dtWeekeEnd">结束日期</param>
         public static void GetWeekAll(int nYear, int nNumWeek, out DateTime dtWeekStart, out DateTime dtWeekeEnd)
         {
-            //DateTime dt = new DateTime(nYear, 1, 1);
-            //dt = dt + new TimeSpan((nNumWeek - 1) * 7, 0, 0, 0);
-            //dtWeekStart = dt.AddDays(-(int)dt.DayOfWeek + (int)DayOfWeek.Sunday);
-            //dtWeekeEnd = dt.AddDays((int)DayOfWeek.Friday - (int)dt.DayOfWeek + 1).AddDays(1).AddSeconds(-1);
-            GetFirstEndDayOfWeek(nYear, nNumWeek, CultureInfo.CurrentCulture, out dtWeekStart, out dtWeekeEnd);
-            dtWeekeEnd = dtWeekeEnd.AddSeconds(-1);
+            GetWeek(nYear, nNumWeek, out dtWeekStart, out dtWeekeEnd);
+            dtWeekeEnd = dtWeekeEnd.AddDays(1).AddSeconds(-1);
         }
 
         /// <summary>
@@ -343,95 +244,8 @@ namespace CodeLib01
             return new DateTime(date.Year, date.Month, 1);
         }
 
-        /// <summary>
-        /// 获取两个日期之间的所有日期
-        /// </summary>
-        /// <param name="startdate"></param>
-        /// <param name="enddate"></param>
-        /// <returns></returns>
-        public static List<DateTime> GetDaysBetweenStartDateEndDate(DateTime startdate, DateTime enddate)
-        {
-            var DateSum = new List<DateTime>();
-            for (var date = startdate; date <= enddate; date = date.AddDays(1))
-            {
-                DateSum.Add(date);
-            }
 
-            return DateSum;
-        }
-
-        /// <summary>
-        /// 获取两个日期之间的所有日期的最后一秒
-        /// </summary>
-        /// <param name="startdate"></param>
-        /// <param name="enddate"></param>
-        /// <returns></returns>
-        public static List<DateTime> GetLastDaysBetweenStartDateEndDate(DateTime startdate, DateTime enddate)
-        {
-            var DateSum = new List<DateTime>();
-            for (var date = startdate; date <= enddate; date = date.AddDays(1))
-            {
-                DateSum.Add(Convert.ToDateTime(date.ToString("yyyy-MM-dd  23:59:59")));
-            }
-
-            return DateSum;
-        }
-
-        /// <summary>
-        /// 获取两个日期之间的所有月份的第一天
-        /// </summary>
-        /// <param name="startdate"></param>
-        /// <param name="enddate"></param>
-        /// <returns></returns>
-        public static List<DateTime> GetMonthsBetweenStartDateEndDate(DateTime startdate, DateTime enddate)
-        {
-            var DateSum = new List<DateTime>();
-            for (var date = startdate; date <= enddate; date = date.AddMonths(1))
-            {
-                DateSum.Add(date);
-            }
-
-            return DateSum;
-        }
-
-        /// <summary>
-        /// 获取两个日期之间的所有月份最后一天
-        /// </summary>
-        /// <param name="startdate"></param>
-        /// <param name="enddate"></param>
-        /// <returns></returns>
-        public static List<DateTime> GetLastMonthsBetweenStartDateEndDate(DateTime startdate, DateTime enddate)
-        {
-            var DateSum = new List<DateTime>();
-            for (var date = startdate; date <= enddate; date = date.AddMonths(1))
-            {
-                //int year = date.Year, month = date.Month;
-                //var lastdate = new DateTime(year, month, DateTime.DaysInMonth(year, month));
-                DateTime lastdate = date.AddDays(1 - date.Day).Date.AddMonths(1).AddSeconds(-1);
-                DateSum.Add(lastdate);
-            }
-
-            return DateSum;
-        }
-
-        /// <summary>
-        /// 获取两个日期之间的所有日期
-        /// </summary>
-        /// <param name="startdate"></param>
-        /// <param name="enddate"></param>
-        /// <returns></returns>
-        public static List<DateTime> GetDaysBetweenStartDateEndDateNotIncludeLast(DateTime startdate, DateTime enddate)
-        {
-            var DateSum = new List<DateTime>();
-            for (var date = startdate; date < enddate; date = date.AddDays(1))
-            {
-                DateSum.Add(date);
-            }
-
-            return DateSum;
-        }
-
-        #region MyRegion
+        #region timestamp
 
         /// <summary>
         /// 生成十位的 Unix 时间戳
@@ -485,6 +299,8 @@ namespace CodeLib01
         }
 
         #endregion
+
+        #region format exact
 
         public static DateTime? yyyyMMddHHmmss(string? s)
         {
@@ -545,37 +361,24 @@ namespace CodeLib01
             }
         }
 
+        #endregion
+
         /// <summary>
         /// 获取当年的周数
         /// </summary>
-        public static int GetWeeksInYear(int year)
-        {
-            return DateTimeFormatInfo.CurrentInfo.Calendar.GetWeekOfYear(new DateTime(year, 12, 31), CalendarWeekRule.FirstDay, DayOfWeek.Sunday);
-        }
+        public static int WeeksInYear(int year) => new DateTime(year, 12, 31).WeekOfYear();
 
-        public static int GetDaysInMonth(this DateTime date)
+        /// <summary>
+        /// 获取当年的周数
+        /// </summary>
+        /// <param name="date"></param>
+        /// <returns></returns>
+        public static int WeeksInYear(this DateTime date) => WeeksInYear(date.Year);
+
+        public static int DaysInMonth(this DateTime date)
         {
             return DateTime.DaysInMonth(date.Year, date.Month);
         }
 
-        /// <summary>
-        /// 获取日期所在年多少周
-        /// </summary>
-        /// <param name="date"></param>
-        /// <returns></returns>
-        public static int GetWeeksOfYear(this DateTime date)
-        {
-            return DateTimeFormatInfo.CurrentInfo.Calendar.GetWeekOfYear(new DateTime(date.Year, 12, 31), CalendarWeekRule.FirstDay, DayOfWeek.Sunday);
-        }
-
-        /// <summary>
-        /// 获取日期是第几周
-        /// </summary>
-        /// <param name="date"></param>
-        /// <returns></returns>
-        public static int GetWeekOfYear(this DateTime date)
-        {
-            return DateTimeFormatInfo.CurrentInfo.Calendar.GetWeekOfYear(date, CalendarWeekRule.FirstDay, DayOfWeek.Sunday);
-        }
     }
 }

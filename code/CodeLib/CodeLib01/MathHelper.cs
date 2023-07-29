@@ -1,5 +1,6 @@
 ﻿using System;
 
+#pragma warning disable CS0219,CS8600,CS8602,CS8603,CS8604,CS8618,CS8619,CS8625,CS8714
 namespace CodeLib01;
 
 public static class MathHelper
