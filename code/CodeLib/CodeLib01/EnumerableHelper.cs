@@ -6,7 +6,7 @@ using System.Linq;
 #pragma warning disable CS0219,CS8600,CS8602,CS8603,CS8604,CS8618,CS8619,CS8625,CS8714
 namespace CodeLib01;
 
-public static class IEnumerableExtension
+public static class EnumerableHelper
 {
     /// <summary>
     /// 以指定数量为长度周期的列表枚举, 遍历一个列表<br/>
@@ -275,10 +275,7 @@ public static class IEnumerableExtension
             yield return creator();
         }        
     }
-}
-
-public static class IEnumerableHelper
-{
+    
     /// <summary>
     /// 2022-10-19 Ciaran 返回一个空的枚举数
     /// </summary>
