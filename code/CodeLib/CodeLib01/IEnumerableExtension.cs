@@ -260,6 +260,21 @@ public static class IEnumerableExtension
             current = current.Next;
         } while (current != head);
     }
+    
+    /// <summary>
+    /// 2023-8-10 Ciaran 重复创建多个对象
+    /// </summary>
+    /// <param name="creator"></param>
+    /// <param name="count"></param>
+    /// <typeparam name="T"></typeparam>
+    /// <returns></returns>
+    public static IEnumerable<T> Repeat<T>(this Func<T> creator, int count)
+    {
+        for (int i = 0; i < count; i++)
+        {
+            yield return creator();
+        }        
+    }
 }
 
 public static class IEnumerableHelper

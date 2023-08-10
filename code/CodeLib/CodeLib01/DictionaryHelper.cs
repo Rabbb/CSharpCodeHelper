@@ -189,7 +189,7 @@ namespace CodeLib01
         
         
         /// <summary>
-        /// ToDictionary方法扩展
+        /// 2023-8-10 Ciaran ToDictionary方法扩展
         /// </summary>
         /// <param name="source"></param>
         /// <param name="keySelector"></param>
@@ -218,7 +218,7 @@ namespace CodeLib01
         }
         
         /// <summary>
-        /// ToDictionary方法扩展
+        /// 2023-8-10 Ciaran ToDictionary方法扩展
         /// </summary>
         /// <param name="source"></param>
         /// <param name="keySelector"></param>
