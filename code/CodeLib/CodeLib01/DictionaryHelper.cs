@@ -186,5 +186,64 @@ namespace CodeLib01
 
             return max;
         }
+        
+        
+        /// <summary>
+        /// ToDictionary方法扩展
+        /// </summary>
+        /// <param name="source"></param>
+        /// <param name="keySelector"></param>
+        /// <param name="elementSelector"></param>
+        /// <typeparam name="TSource"></typeparam>
+        /// <typeparam name="TKey"></typeparam>
+        /// <typeparam name="TValue"></typeparam>
+        /// <returns></returns>
+        public static Dictionary<TKey, TValue> ToDictionary<TSource, TKey, TValue>(this IEnumerable<TSource> source, Func<TSource, int, TKey> keySelector, Func<TSource, int, TValue> elementSelector)
+        {
+            var dict = new Dictionary<TKey, TValue>();
+            int index = -1;
+            foreach (TSource source1 in source)
+            {
+                checked
+                {
+                    index++;
+                }
+
+                var key = keySelector(source1, index);
+                var value = elementSelector(source1, index);
+                dict.Add(key, value);
+            }
+
+            return dict;
+        }
+        
+        /// <summary>
+        /// ToDictionary方法扩展
+        /// </summary>
+        /// <param name="source"></param>
+        /// <param name="keySelector"></param>
+        /// <param name="elementSelector"></param>
+        /// <typeparam name="TSource"></typeparam>
+        /// <typeparam name="TKey"></typeparam>
+        /// <typeparam name="TValue"></typeparam>
+        /// <returns></returns>
+        public static Dictionary<TKey, TValue> ToDictionary<TSource, TKey, TValue>(this IEnumerable<TSource> source, Func<TSource, int, IEnumerable<TSource>, TKey> keySelector, Func<TSource, int, IEnumerable<TSource>, TValue> elementSelector)
+        {
+            var dict = new Dictionary<TKey, TValue>();
+            int index = -1;
+            foreach (TSource source1 in source)
+            {
+                checked
+                {
+                    index++;
+                }
+
+                var key = keySelector(source1, index, source);
+                var value = elementSelector(source1, index, source);
+                dict.Add(key, value);
+            }
+
+            return dict;
+        }
     }
 }
