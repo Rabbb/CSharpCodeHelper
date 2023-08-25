@@ -11,8 +11,9 @@ public static class MutexHelper
         {
             mutex.WaitOne();
         }
-        catch (AbandonedMutexException ex)
+        catch (AbandonedMutexException)
         {
+            // ignored
         }
 
         return mutex;
@@ -26,6 +27,7 @@ public static class MutexHelper
         }
         catch
         {
+            // ignored
         }
 
         try
@@ -34,6 +36,7 @@ public static class MutexHelper
         }
         catch
         {
+            // ignored
         }
     }
 }

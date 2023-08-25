@@ -181,7 +181,7 @@ public static class DateTimeHelper
     /// <summary>
     /// 获取当前时间是当年的第几周
     /// </summary>
-    /// <param name="dt"></param>
+    /// <param name="curDay"></param>
     /// <returns></returns>
     public static int WeekOfYear(this DateTime curDay) => (int)Math.Ceiling((curDay.DayOfYear + (int)new DateTime(curDay.Year, 1, 1).DayOfWeek) / 7.0);
     // public static int WeekOfYear(this DateTime curDay) => DateTimeFormatInfo.InvariantInfo.Calendar.GetWeekOfYear(curDay, CalendarWeekRule.FirstDay, DayOfWeek.Sunday);
@@ -202,6 +202,7 @@ public static class DateTimeHelper
 
     /// <summary>
     /// 得到一年中的某周的起始日和截止日(从周日开始计算)
+    /// </summary>
     /// <param name="nYear">年</param>
     /// <param name="nNumWeek">第几周</param>
     /// <param name="dtWeekStart">开始日期</param>

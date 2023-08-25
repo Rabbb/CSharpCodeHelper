@@ -231,15 +231,16 @@ public static class DictionaryHelper
     {
         var dict = new Dictionary<TKey, TValue>();
         int index = -1;
-        foreach (TSource source1 in source)
+        var enumerable = source.ToList();
+        foreach (TSource source1 in enumerable)
         {
             checked
             {
                 index++;
             }
 
-            var key = keySelector(source1, index, source);
-            var value = elementSelector(source1, index, source);
+            var key = keySelector(source1, index, enumerable);
+            var value = elementSelector(source1, index, enumerable);
             dict.Add(key, value);
         }
 
