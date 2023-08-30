@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using System.Text.RegularExpressions;
+
 using Newtonsoft.Json.Linq;
 
 namespace CodeLib01;
@@ -138,4 +140,11 @@ public static class StringHelper
         return s;
     }
 
+    /// <summary>
+    /// 判断是否字符串中包含汉字
+    /// </summary>
+    /// <param name="s"></param>
+    /// <returns></returns>
+    public static bool IncludeChinese(this string s)
+        => Regex.IsMatch(s, @"[\u4e00-\u9fbb]{1,}");
 }
