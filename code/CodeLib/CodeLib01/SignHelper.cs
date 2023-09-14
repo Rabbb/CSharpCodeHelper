@@ -40,7 +40,7 @@ namespace CodeLib01
                 md5data = md5.ComputeHash(Encoding.UTF8.GetBytes(base_string));
             }
 
-            md5data = Encoding.UTF8.GetBytes(string.Join("", md5data.Select(bt => bt.ToString("x2"))));
+            md5data = Encoding.UTF8.GetBytes(md5data.ToHexString());
             return Convert.ToBase64String(md5data);
         }
 
@@ -77,7 +77,7 @@ namespace CodeLib01
             {
                 hash = mac.ComputeHash(Encoding.UTF8.GetBytes(base_string));
             }
-            hash = Encoding.UTF8.GetBytes(string.Join("", hash.Select(bt => bt.ToString("x2"))));
+            hash = Encoding.UTF8.GetBytes(hash.ToHexString());
             return Convert.ToBase64String(hash);
         }
     }

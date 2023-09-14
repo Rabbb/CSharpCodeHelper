@@ -11,38 +11,29 @@ namespace CodeLib01
         /// <summary>
         /// MD5函数
         /// </summary>
-        /// <param name="str">原始字符串</param>
+        /// <param name="base_string">原始字符串</param>
         /// <returns>生成32位MD5密文</returns>
-        public static string MD5_32(string pwd)
+        public static string MD5_32(string base_string)
         {
-            StringBuilder str = new();
             using MD5 md5 = new MD5CryptoServiceProvider();
-            byte[] data = System.Text.Encoding.Default.GetBytes(pwd);
-            byte[] md5data = md5.ComputeHash(data);
-            md5.Clear();
+            byte[] md5data = md5.ComputeHash(Encoding.UTF8.GetBytes(base_string));
 
-            for (int i = 0; i < md5data.Length; i++)
-            {
-                str.Append(md5data[i].ToString("x").PadLeft(2, '0'));
-
-            }
-            return str.ToString();
+            return md5data.ToHexString();
         }
 
         /// <summary>
         /// MD5函数
         /// </summary>
-        /// <param name="str">原始字符串</param>
+        /// <param name="base_string">原始字符串</param>
         /// <returns>生成16位MD5密文</returns>
 
-        public static string MD5_16(string str)
+        public static string MD5_16(string base_string)
         {
             using MD5CryptoServiceProvider md5 = new MD5CryptoServiceProvider();
-            string t2 = BitConverter.ToString(md5.ComputeHash(UTF8Encoding.Default.GetBytes(str)), 4, 8);
-
-            t2 = t2.Replace("-", "");
-
-            return t2;
+            var md5data = md5.ComputeHash(Encoding.UTF8.GetBytes(base_string));
+            var bytes = new byte[8];
+            Array.Copy(md5data, 4,  bytes, 0, 8);
+            return bytes.ToHexString();
         }
         #endregion
 

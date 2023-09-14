@@ -12,12 +12,12 @@ namespace CodeLib01
         /// <summary>
         /// Base64解密
         /// </summary>
-        public static string DecodeBase64(Encoding encode, string result) => encode.GetString(Convert.FromBase64String(result));
+        public static string DecodeBase64(string result, Encoding encode) => encode.GetString(Convert.FromBase64String(result));
 
         /// <summary>
         /// Base64解密，采用utf8编码方式解密
         /// </summary>
-        public static string DecodeBase64(string result) => DecodeBase64(Encoding.UTF8, result);
+        public static string DecodeBase64(string result) => DecodeBase64(result, Encoding.UTF8);
 
         public static byte[] FromHexString(string hex_string)
         {
