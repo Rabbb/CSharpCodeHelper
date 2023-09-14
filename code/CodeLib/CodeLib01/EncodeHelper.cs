@@ -12,33 +12,18 @@ namespace CodeLib01
         /// <summary>
         /// Base64加密
         /// </summary>
-        /// <param name="codeName">加密采用的编码方式</param>
-        /// <param name="source">待加密的明文</param>
         /// <returns></returns>
-        public static string EncodeBase64(Encoding encode, string source)
-        {
-            string encodestr = "";
-            byte[] bytes = encode.GetBytes(source);
-            try
-            {
-                encodestr = Convert.ToBase64String(bytes);
-            }
-            catch
-            {
-                encodestr = source;
-            }
-            return encodestr;
-        }
+        public static string EncodeBase64(Encoding encode, string source) => Convert.ToBase64String(encode.GetBytes(source));
 
         /// <summary>
         /// Base64加密，采用utf8编码方式加密
         /// </summary>
-        /// <param name="source">待加密的明文</param>
-        /// <returns>加密后的字符串</returns>
-        public static string EncodeBase64(string source)
-        {
-            return EncodeBase64(Encoding.UTF8, source);
-        }
+        public static string EncodeBase64(string source) => EncodeBase64(Encoding.UTF8, source);
 
+        public static string ToHexString(byte[] hash, bool upper = false)
+        {
+            string format = upper ? "X2" : "x2";
+            return string.Join("", hash.Select(bt => bt.ToString(format)));
+        }
     }
 }

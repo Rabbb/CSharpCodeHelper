@@ -12,34 +12,23 @@ namespace CodeLib01
         /// <summary>
         /// Base64解密
         /// </summary>
-        /// <param name="codeName">解密采用的编码方式，注意和加密时采用的方式一致</param>
-        /// <param name="result">待解密的密文</param>
-        /// <returns>解密后的字符串</returns>
-        public static string DecodeBase64(Encoding encode, string result)
-        {
-            string decode = "";
-            byte[] bytes = Convert.FromBase64String(result);
-            try
-            {
-                decode = encode.GetString(bytes);
-            }
-            catch
-            {
-                decode = result;
-            }
-            return decode;
-        }
+        public static string DecodeBase64(Encoding encode, string result) => encode.GetString(Convert.FromBase64String(result));
 
         /// <summary>
         /// Base64解密，采用utf8编码方式解密
         /// </summary>
-        /// <param name="result">待解密的密文</param>
-        /// <returns>解密后的字符串</returns>
-        public static string DecodeBase64(string result)
+        public static string DecodeBase64(string result) => DecodeBase64(Encoding.UTF8, result);
+
+        public static byte[] FromHexString(string hex_string)
         {
-            return DecodeBase64(Encoding.UTF8, result);
+            byte[] bytes = new byte[hex_string.Length / 2];
+
+            for (int i = 2; i < hex_string.Length; i += 2)
+            {
+                bytes[i / 2] = Convert.ToByte(hex_string.Substring(i, 2), 16);
+            }
+
+            return bytes;
         }
-
-
     }
 }
