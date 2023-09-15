@@ -4,6 +4,12 @@ namespace CodeLib01;
 
 public static class MutexHelper
 {
+
+    /// <summary>
+    /// 等待一个锁
+    /// </summary>
+    /// <param name="name"></param>
+    /// <returns></returns>
     public static Mutex WaitOne(string name)
     {
         var mutex = new Mutex(false, name);
@@ -19,6 +25,10 @@ public static class MutexHelper
         return mutex;
     }
 
+    /// <summary>
+    /// 释放锁, 并消耗当前对象
+    /// </summary>
+    /// <param name="mutex"></param>
     public static void ReleaseClose(this Mutex mutex)
     {
         try
