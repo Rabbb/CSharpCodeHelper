@@ -15,9 +15,11 @@ namespace CodeLib01
         /// <returns>生成32位MD5密文</returns>
         public static string MD5_32(string base_string)
         {
-            using MD5 md5 = new MD5CryptoServiceProvider();
-            byte[] md5data = md5.ComputeHash(Encoding.UTF8.GetBytes(base_string));
-
+            byte[] md5data;
+            using (MD5CryptoServiceProvider md5 = new MD5CryptoServiceProvider())
+            {
+                md5data = md5.ComputeHash(Encoding.UTF8.GetBytes(base_string));
+            }
             return md5data.ToHexString();
         }
 
@@ -29,10 +31,13 @@ namespace CodeLib01
 
         public static string MD5_16(string base_string)
         {
-            using MD5CryptoServiceProvider md5 = new MD5CryptoServiceProvider();
-            var md5data = md5.ComputeHash(Encoding.UTF8.GetBytes(base_string));
+            byte[] md5data;
+            using (MD5CryptoServiceProvider md5 = new MD5CryptoServiceProvider())
+            {
+                md5data = md5.ComputeHash(Encoding.UTF8.GetBytes(base_string));
+            }
             var bytes = new byte[8];
-            Array.Copy(md5data, 4,  bytes, 0, 8);
+            Array.Copy(md5data, 4, bytes, 0, 8);
             return bytes.ToHexString();
         }
         #endregion
