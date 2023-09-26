@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Globalization;
 using CodeLib01.Models;
 using Newtonsoft.Json.Linq;
@@ -27,6 +28,19 @@ public enum DatePart
 
 public static class DateTimeHelper
 {
+
+    /// <summary>
+    /// 停止计时, 并返回计时
+    /// </summary>
+    /// <param name="timer"></param>
+    /// <returns></returns>
+    public static TimeSpan StopTime(this Stopwatch timer)
+    {
+        timer.Stop();
+        return timer.Elapsed;
+    }
+
+
     /// <summary>
     /// MSSQL DateTime类型最小值 1753-01-01 00:00:00
     /// </summary>
