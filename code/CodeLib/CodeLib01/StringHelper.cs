@@ -11,6 +11,86 @@ namespace CodeLib01;
 
 public static class StringHelper
 {
+
+    /// <summary>
+    /// 2023-9-28 Ciaran 处理卡牌号码
+    /// </summary>
+    /// <param name="s"></param>
+    /// <returns></returns>
+    public static string ProcessCardCode(string s)
+    {
+        if (s == null) return null;
+        var code_regex = new Regex(@"[^A-Za-z0-9\-()]", RegexOptions.Compiled | RegexOptions.CultureInvariant);
+        s = code_regex.Replace(s, match =>
+        {
+            if (match.Value == "（") return "(";
+            if (match.Value == "）") return ")";
+            return "";
+        });
+        // 大写
+        s = s.ToUpperInvariant();
+
+        return s;
+    }
+
+    /// <summary>
+    /// 2023-9-28 Ciaran 处理车牌号码
+    /// </summary>
+    /// <param name="s"></param>
+    /// <returns></returns>
+    public static string ProcessPlateNo(string s)
+    {
+        if (s == null) return null;
+        // 文字, 字母, 数字
+        var code_regex = new Regex(@"([^\wA-Za-z0-9]|[_])", RegexOptions.Compiled | RegexOptions.CultureInvariant);
+        s = code_regex.Replace(s, match =>
+        {
+            return "";
+        });
+        // 大写
+        s = s.ToUpperInvariant();
+
+        return s;
+    }
+
+
+    /// <summary>
+    /// 2023-9-28 Ciaran 处理用户ID
+    /// </summary>
+    /// <param name="s"></param>
+    /// <returns></returns>
+    public static string ProcessUserID(string s)
+    {
+        if (s == null) return null;
+        // 文字, 字母, 数字
+        var code_regex = new Regex(@"[^A-Za-z0-9]", RegexOptions.Compiled | RegexOptions.CultureInvariant);
+        s = code_regex.Replace(s, match =>
+        {
+            return "";
+        });
+
+        return s;
+    }
+
+    /// <summary>
+    /// 2023-9-28 Ciaran 处理人名
+    /// </summary>
+    /// <param name="s"></param>
+    /// <returns></returns>
+    public static string ProcessPersonName(string s)
+    {
+        if (s == null) return null;
+        // 文字, 字母, 数字
+        var code_regex = new Regex(@"([^\wA-Za-z0-9]|[_])", RegexOptions.Compiled | RegexOptions.CultureInvariant);
+        s = code_regex.Replace(s, match =>
+        {
+            return "";
+        });
+
+        return s;
+    }
+
+
     /// <summary>
     /// 2023-7-3 Ciaran 非(中英文标点符号, 空格换行制表符, 文字, 英文字母, 数字)的字符
     /// </summary>
