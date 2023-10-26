@@ -3,8 +3,17 @@ using System.Threading;
 
 namespace CodeLib01;
 
+/// <summary>
+/// 定时器 2023-10-26 Ciaran
+/// </summary>
 public static class TimerHelper
 {
+    /// <summary>
+    /// 一次性定时器 2023-10-26 Ciaran
+    /// </summary>
+    /// <param name="fn"></param>
+    /// <param name="interval"></param>
+    /// <returns></returns>
     public static Timer SetTimeout(Action fn, long interval)
     {
         Timer? timer1 = null;
@@ -26,46 +35,54 @@ public static class TimerHelper
         return timer1;
     }
 
-
+    /// <summary>
+    /// 循环定时器 2023-10-26 Ciaran
+    /// </summary>
+    /// <param name="fn"></param>
+    /// <param name="interval"></param>
+    /// <param name="times"></param>
+    /// <returns></returns>
     public static Timer SetInterval(Action fn, long interval, ulong times = 0)
     {
         Timer? timer1 = null;
         ulong times2 = times;
 
-        var callback = times > 0 ? new TimerCallback(_ =>
-        {
-            if (--times == 0)
+        var callback = times > 0
+            ? new TimerCallback(_ =>
             {
-                try
+                if (--times == 0)
                 {
-                    timer1!.Dispose();
+                    try
+                    {
+                        timer1!.Dispose();
+                    }
+                    catch (Exception)
+                    {
+                        // ignore
+                    }
                 }
-                catch (Exception)
+                else if (times2 <= times)
                 {
-                    // ignore
+                    try
+                    {
+                        timer1!.Dispose();
+                    }
+                    catch (Exception)
+                    {
+                        // ignore
+                    }
+
+                    return;
                 }
-            }
-            else if (times2 <= times)
-            {
-                try
+
+                if (times < times2)
                 {
-                    timer1!.Dispose();
+                    times2 = times;
                 }
-                catch (Exception)
-                {
-                    // ignore
-                }
-                return;
-            }
-            if (times < times2)
-            {
-                times2 = times;
-            }
-            fn.Invoke();
-        }) : new TimerCallback(_ =>
-        {
-            fn.Invoke();
-        });
+
+                fn.Invoke();
+            })
+            : new TimerCallback(_ => { fn.Invoke(); });
 
         timer1 = new Timer(callback, null, interval, interval);
 
