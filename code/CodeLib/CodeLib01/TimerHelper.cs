@@ -31,30 +31,42 @@ public static class TimerHelper
     {
         Timer? timer1 = null;
         ulong times2 = times;
-        var callback = new TimerCallback(_ =>
+
+        var callback = times > 0 ? new TimerCallback(_ =>
         {
-            if (times > 0)
+            if (--times == 0)
             {
-                times--;
-                if (times == 0 || times2 <= times)
+                try
                 {
-                    try
-                    {
-                        timer1!.Dispose();
-                    }
-                    catch (Exception)
-                    {
-                        // ignore
-                    }
+                    timer1!.Dispose();
                 }
-                if (times < times2)
+                catch (Exception)
                 {
-                    times2 = times;
+                    // ignore
                 }
             }
-
+            else if (times2 <= times)
+            {
+                try
+                {
+                    timer1!.Dispose();
+                }
+                catch (Exception)
+                {
+                    // ignore
+                }
+                return;
+            }
+            if (times < times2)
+            {
+                times2 = times;
+            }
+            fn.Invoke();
+        }) : new TimerCallback(_ =>
+        {
             fn.Invoke();
         });
+
         timer1 = new Timer(callback, null, interval, interval);
 
         return timer1;
