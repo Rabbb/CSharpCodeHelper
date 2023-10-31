@@ -1,5 +1,7 @@
 ﻿using System;
+using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 
 #pragma warning disable CS0219,CS8600,CS8602,CS8603,CS8604,CS8618,CS8619,CS8625,CS8714
 namespace CodeLib01;
@@ -114,4 +116,65 @@ public static class NumberHelper
     }
 
     #endregion
+
+
+    /// <summary>
+    /// 数字1-9转换为中文数字, 否则返回原字符串 2023-11-1 Ciaran
+    /// </summary>
+    /// <param name="num"></param>
+    /// <returns></returns>
+    public static string OneBitNumberToChinese(string num)
+    {
+        var numStr = "123456789".Select(c => c.ToString()).ToList();
+        var chineseStr = "一二三四五六七八九".Select(c => c.ToString()).ToList();
+        int numIndex = numStr.IndexOf(num);
+        if (numIndex > -1)
+        {
+            return chineseStr[numIndex];
+        }
+
+        return num;
+    }
+
+    /// <summary>
+    /// 金额转中文大写
+    /// </summary>
+    /// <param name="number"></param>
+    /// <returns></returns>
+    public static string GetNumber2CN(this double number)
+    {
+        StringBuilder cnStr = new StringBuilder();
+        string CnNumber = "零壹贰叁肆伍陆柒捌玖";
+        string CnUnit = "分角元拾佰仟万拾佰仟亿拾佰仟万";
+        string numStr = number.ToString("#0.00").Replace(".", "");
+        for (int i = 0; i < numStr.Length; i++)
+        {
+            int num = int.Parse(numStr.Substring(i, 1));
+            cnStr.Append(CnNumber.Substring(num, 1) + CnUnit.Substring(numStr.Length - i - 1, 1));
+        }
+
+        while (Regex.IsMatch(cnStr.ToString(), "零零|零拾|零佰|零仟|零万|零亿|亿万"))
+        {
+            cnStr = cnStr.Replace("零拾", "零");
+            cnStr = cnStr.Replace("零佰", "零");
+            cnStr = cnStr.Replace("零仟", "零");
+            cnStr = cnStr.Replace("零万", "万");
+            cnStr = cnStr.Replace("零亿", "亿");
+            cnStr = cnStr.Replace("零零", "零");
+            cnStr = cnStr.Replace("亿万", "亿零");
+        }
+
+        cnStr = cnStr.Replace("零元", "元").Replace("零角", "").Replace("零分", "");
+        if (cnStr.ToString().StartsWith("元"))
+        {
+            return cnStr.ToString().Substring(1);
+        }
+
+        if (cnStr.ToString().EndsWith("元"))
+        {
+            return cnStr.ToString() + "整";
+        }
+
+        return cnStr.ToString();
+    }
 }
