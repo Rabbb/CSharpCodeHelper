@@ -258,10 +258,8 @@ public class ListSet<T> : IList<T>,
         get => _list[index];
         set
         {
-            var item = _list[index];
-            _set.Remove(item);
-            _set.Add(value);
-            _list[index] = value;
+            RemoveAt(index);
+            Insert(index, value);
         }
     }
 
