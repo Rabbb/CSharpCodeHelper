@@ -6,7 +6,7 @@ using System.Runtime.Serialization;
 
 namespace CodeLib01.Models;
 
-public class ListSet<T> : ICollection<T>, IEnumerable<T>, IEnumerable, IReadOnlyCollection<T>, ISet<T>, IDeserializationCallback, ISerializable
+public class ListSet<T> : ICollection<T>, IEnumerable<T>, IEnumerable, IList<T>, IReadOnlyCollection<T>, ISet<T>, IDeserializationCallback, ISerializable
 {
     private readonly List<T> _list = new List<T>();
     private readonly HashSet<T> _set = new HashSet<T>();
@@ -19,6 +19,30 @@ public class ListSet<T> : ICollection<T>, IEnumerable<T>, IEnumerable, IReadOnly
     IEnumerator IEnumerable.GetEnumerator()
     {
         return ((IEnumerable)_list).GetEnumerator();
+    }
+
+    public int IndexOf(T item)
+    {
+        return _list.IndexOf(item);
+    }
+
+    public void Insert(int index, T item)
+    {
+        Remove(item);
+        _set.Add(item);
+        _list.Insert(index, item);
+    }
+
+    public void RemoveAt(int index)
+    {
+        _set.Remove(_list[index]);
+        _list.RemoveAt(index);
+    }
+
+    public T this[int index]
+    {
+        get => _list[index];
+        set => Insert(index, value);
     }
 
     void ICollection<T>.Add(T item)
